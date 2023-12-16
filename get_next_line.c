@@ -6,7 +6,7 @@
 /*   By: sruff <sruff@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 17:49:40 by sruff             #+#    #+#             */
-/*   Updated: 2023/12/15 17:58:08 by sruff            ###   ########.fr       */
+/*   Updated: 2023/12/16 16:34:15 by sruff            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ static char	*prepare(char *buffer, char *temp_buffer)
 	temp_cutter = temp_buffer;
 	if (cutter == NULL)
 	{
+		//error->error = -1;
+		//ft_strchr(buffer, 'EOF')
 		return (NULL);
 	}
 	if (*cutter)
@@ -105,12 +107,17 @@ static char	*prepare(char *buffer, char *temp_buffer)
 	return (NULL);
 }
 
-static char	*reading(int fd, char *buffer, char *temp_buffer)
+static char	*reading(int fd, char *buffer, char *temp_buffer, t_error *error)
 {
 	int		bytes;
 
 	bytes = read(fd, temp_buffer, BUFFER_SIZE);
-	temp_buffer[BUFFER_SIZE] = '\0'; 
+	temp_buffer[BUFFER_SIZE] = '\0';
+	if (bytes == 0)
+	{
+		error->error = -1;
+		return (temp_buffer);
+	}
 	if (bytes == -1)
 	{	
 		free(buffer);
@@ -127,15 +134,16 @@ char *get_next_line(int fd)
 	char		*temp_buffer;
 	char		*next_line;
     int 		bytes;
+	t_error	error;
 
-	bytes = 0;
-	if (buffer)
-	{
-		bytes = ft_strlen(buffer);
-	}
+
+	error.error = 0;
+
+	bytes = ft_strlen(buffer);
 	temp_buffer = malloc(BUFFER_SIZE + bytes + 1);
 	//strjoin
-	temp_buffer = reading(fd, buffer, temp_buffer);
+	temp_buffer = reading(fd, buffer, temp_buffer, &error);
+	// implement reading flag here
 	if (buffer)
 		buffer = ft_strjoin(buffer, temp_buffer);
 	if (!buffer)	
@@ -143,8 +151,10 @@ char *get_next_line(int fd)
 	//if (temp_buffer== NULL)
 	//	return (NULL);
 	next_line = prepare(buffer, temp_buffer);
-	if (!next_line)
+	if (!next_line && error.error == 0)
 		return (get_next_line(fd)); // split fn into static buf and next_line output
+	if (error.error == -1)
+		return (buffer);	
 	buffer = prepare_s(buffer, temp_buffer);
 	// strjoin()
 	return (next_line);
