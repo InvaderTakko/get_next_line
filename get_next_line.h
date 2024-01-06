@@ -6,7 +6,7 @@
 /*   By: sruff <sruff@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 16:05:30 by sruff             #+#    #+#             */
-/*   Updated: 2023/12/16 16:15:28 by sruff            ###   ########.fr       */
+/*   Updated: 2024/01/06 16:08:49 by sruff            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,21 @@
 # include <stdlib.h>
 # include <string.h>
 
-typedef struct s_error
+typedef struct s_gnl
 {
-	int				error;
-}					t_error;
+	int				fd;
+	long			bytes;
+	char			*temp;
+	char			*next_line;
+}					t_gnl;
 
 char	*get_next_line(int fd);
-//char    *ft_strncpy(char *dest, char *src, unsigned int n);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
-char	*ft_strdup(const char *s1);
 size_t	ft_strlen(const char *s);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
-//char	*reading(int fd, char *buffer, char *temp_buffer);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strjoin(char const *s1, char const *s2);
-int main(void);
+
+//int main(void);
 
 #endif

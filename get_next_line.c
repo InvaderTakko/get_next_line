@@ -6,188 +6,157 @@
 /*   By: sruff <sruff@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 17:49:40 by sruff             #+#    #+#             */
-/*   Updated: 2023/12/16 16:34:15 by sruff            ###   ########.fr       */
+/*   Updated: 2024/01/06 16:12:54 by sruff            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
 #include "get_next_line.h"
 
-//#define BUFFER_SIZE 24
-//void	search_destroy()
-//char	*get_next_line(int fd)
+static void	multi_free(char **ptr1, char **ptr2, char	**ptr3)
+{
+	if (ptr1)
+	{
+		free(*ptr1);
+		*ptr1 = NULL;
+	}
+	if (ptr2)
+	{
+		free(*ptr2);
+		*ptr2 = NULL;
+	}
+	if (ptr3)
+	{
+		free(*ptr3);
+		*ptr3 = NULL;
+	}
+}
+
+static void	*ft_memmove(void *dst, const void *src, size_t len)
+{
+	const char	*s;
+	char		*d;
+
+	s = (char *)src;
+	d = (char *)dst;
+	if (!d && !s)
+		return (NULL);
+	if (d < s)
+	{
+		while (len--)
+			*d++ = *s++;
+	}
+	else if (d > s)
+	{
+		d = d + len - 1;
+		s = s + len - 1;
+		while (len--)
+			*d-- = *s--;
+	}
+	return (dst);
+}
+
+static void	prep_nl(char *buffer, t_gnl *gnl)
+{
+	char	*nl_ptr;
+	char	*substr;
+
+	nl_ptr = ft_strchr(buffer, '\n');
+	if (nl_ptr)
+	{
+		nl_ptr++;
+		substr = ft_substr(buffer, 0, nl_ptr - buffer);
+		gnl->temp = ft_strjoin(gnl->next_line, substr);
+		multi_free(&gnl->next_line, &substr, NULL);
+		gnl->next_line = gnl->temp;
+		ft_memmove(buffer, nl_ptr, ft_strlen(nl_ptr) + 1);
+	}
+	if (!nl_ptr)
+	{
+		gnl->temp = ft_strjoin(gnl->next_line, buffer);
+		multi_free(&gnl->next_line, NULL, NULL);
+		gnl->next_line = gnl->temp;
+		buffer[0] = '\0';
+	}
+}
+
+static char	*read_nl(char *buffer, t_gnl *gnl)
+{
+	while (!ft_strchr(buffer, '\n') && !(gnl->bytes < BUFFER_SIZE))
+	{
+		gnl->temp = ft_strjoin(gnl->next_line, buffer);
+		multi_free(&gnl->next_line, NULL, NULL);
+		gnl->next_line = gnl->temp;
+		gnl->bytes = read(gnl->fd, buffer, BUFFER_SIZE);
+		if (gnl->bytes == -1)
+		{
+			buffer[0] = '\0';
+			gnl->temp = NULL;
+			return (multi_free(&gnl->next_line, NULL, NULL), NULL);
+		}
+	}
+	buffer[gnl->bytes] = '\0';
+	gnl->temp = NULL;
+	return ("1");
+}
+
+char	*get_next_line(int fd)
+{
+	static char	buffer[BUFFER_SIZE + 1];
+	t_gnl		gnl;
+
+	gnl.fd = fd;
+	gnl.next_line = NULL;
+	gnl.bytes = BUFFER_SIZE;
+	gnl.temp = NULL;
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (!read_nl(buffer, &gnl))
+		return (NULL);
+	prep_nl(buffer, &gnl);
+	return (gnl.next_line);
+}
+//int main(void)
 //{
-//	char 		*buffer;
-//	static int	bytes_read;
-//	int			temp_read;
+//    char *ptr = NULL;
+//    int file = open("example.txt", O_RDONLY);
 
-//	buffer = NULL;
-//	temp_read = 0;
+//	// BUFFER_SIZE 5 doesnt work check prepare
+//    ptr = get_next_line(file);
+//	printf("%s", ptr);
+//	free(ptr);
+//	ptr = get_next_line(file);
+//	printf("%s", ptr);
+//	free(ptr);
+//	ptr = get_next_line(file);
+//	printf("%s", ptr);
+//	free(ptr);
+//	ptr = get_next_line(file);
+//	printf("%s", ptr);
+//	free(ptr);
+//	ptr = get_next_line(file);
+//	printf("%s", ptr);
+//	free(ptr);
+//	ptr = get_next_line(file);
+//	printf("%s", ptr);
+//	free(ptr);
+//	ptr = get_next_line(file);
+//	printf("%s", ptr);
+//	free(ptr);
+//	ptr = get_next_line(file);
+//	printf("%s", ptr);
+//	free(ptr);
+//	ptr = get_next_line(file);
+//	printf("%s", ptr);
+//	free(ptr);
+//    //while (1 == 1)
+//    //{
+//	//	ptr = get_next_line(file);
+//	//	if (ptr == NULL)
+//	//		break;
+//    //    printf("%s", ptr);
+//    //    //free(ptr);
+//    //}
 
-//	while (temp_read < bytes_read && bytes_read)
-//	{
-//		//buffer = malloc(BUFFER_SIZE * sizeof(char) + 1);
-//		read(fd, buffer, BUFFER_SIZE);
-//		//buffer[BUFFER_SIZE] = '\0';
-//		temp_read += BUFFER_SIZE;
-//		//free(buffer);
-//	}
-//	//free(buffer);
-//	buffer = malloc(BUFFER_SIZE * sizeof(char) + 1);
-//	read(fd, buffer, BUFFER_SIZE);
-//	buffer[BUFFER_SIZE] = '\0';
-//	bytes_read += BUFFER_SIZE;
-//	return (buffer);
+//    close(file);
+//    return 0;
 //}
-static char	*prepare_s(char *buffer, char *temp_buffer)
-{
-	char *cutter;
-	char *temp_cutter;
-
-	cutter = ft_strchr(buffer, '\n');
-	temp_cutter = temp_buffer;
-	if (cutter == NULL)
-	{
-		return (NULL);
-	}
-	if (*cutter)
-	{
-		cutter++;
-		if (*cutter)
-		{
-			//free(buffer);
-			buffer = ft_strdup(cutter);
-			//temp_cutter = ft_strdup(temp_cutter);
-			//temp_cutter++;
-			//temp_cutter = ft_strchr(temp_buffer, '\n');
-			//temp_cutter++;
-			//*temp_cutter = '\0';
-			//*buffer = '\0';
-			
-		}
-		return(buffer);
-	}
-	return (NULL);
-}
-
-static char	*prepare(char *buffer, char *temp_buffer)
-{
-	char *cutter;
-	char *temp_cutter;
-
-	cutter = ft_strchr(buffer, '\n');
-	temp_cutter = temp_buffer;
-	if (cutter == NULL)
-	{
-		//error->error = -1;
-		//ft_strchr(buffer, 'EOF')
-		return (NULL);
-	}
-	if (*cutter)
-	{
-		cutter++;
-		if (*cutter)
-		{
-			//free(buffer);
-			temp_buffer = ft_strdup(buffer);
-			buffer = ft_strdup(cutter);
-			//temp_cutter = ft_strdup(temp_cutter);
-			//temp_cutter++;
-			temp_cutter = ft_strchr(temp_buffer, '\n');
-			temp_cutter++;
-			*temp_cutter = '\0';
-			//*buffer = '\0';
-			
-		}
-		return(temp_buffer);
-	}
-	return (NULL);
-}
-
-static char	*reading(int fd, char *buffer, char *temp_buffer, t_error *error)
-{
-	int		bytes;
-
-	bytes = read(fd, temp_buffer, BUFFER_SIZE);
-	temp_buffer[BUFFER_SIZE] = '\0';
-	if (bytes == 0)
-	{
-		error->error = -1;
-		return (temp_buffer);
-	}
-	if (bytes == -1)
-	{	
-		free(buffer);
-	 	free(temp_buffer);
-		return (NULL);
-	}
-	//buffer = ft_strdup(temp_buffer);
-	return (temp_buffer);
-}
-
-char *get_next_line(int fd)
-{
-    static char *buffer = NULL;
-	char		*temp_buffer;
-	char		*next_line;
-    int 		bytes;
-	t_error	error;
-
-
-	error.error = 0;
-
-	bytes = ft_strlen(buffer);
-	temp_buffer = malloc(BUFFER_SIZE + bytes + 1);
-	//strjoin
-	temp_buffer = reading(fd, buffer, temp_buffer, &error);
-	// implement reading flag here
-	if (buffer)
-		buffer = ft_strjoin(buffer, temp_buffer);
-	if (!buffer)	
-		buffer = ft_strdup(temp_buffer);
-	//if (temp_buffer== NULL)
-	//	return (NULL);
-	next_line = prepare(buffer, temp_buffer);
-	if (!next_line && error.error == 0)
-		return (get_next_line(fd)); // split fn into static buf and next_line output
-	if (error.error == -1)
-		return (buffer);	
-	buffer = prepare_s(buffer, temp_buffer);
-	// strjoin()
-	return (next_line);
-}
-
-
-
-int main(void)
-{
-    char *ptr = NULL;
-    int file = open("example.txt", O_RDONLY);
-
-    ptr = get_next_line(file);
-	printf("%s", ptr);
-	free(ptr);
-	ptr = get_next_line(file);
-	printf("%s", ptr);
-	free(ptr);
-	ptr = get_next_line(file);
-	printf("%s", ptr);
-	free(ptr);
-	ptr = get_next_line(file);
-	printf("%s", ptr);
-	free(ptr);
-    //while (1 == 1)
-    //{
-	//	ptr = get_next_line(file);
-	//	if (ptr == NULL)
-	//		break;
-    //    printf("%s", ptr);
-    //    //free(ptr);
-    //}
-
-    close(file);
-    return 0;
-}
