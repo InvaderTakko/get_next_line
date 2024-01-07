@@ -6,7 +6,7 @@
 /*   By: sruff <sruff@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 16:05:30 by sruff             #+#    #+#             */
-/*   Updated: 2024/01/06 19:26:53 by sruff            ###   ########.fr       */
+/*   Updated: 2024/01/07 13:25:06 by sruff            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 # endif
 
 # include <unistd.h>
-# include <fcntl.h>
-# include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
+//# include <fcntl.h>
+//# include <stdio.h>
+//# include <string.h>
 
 typedef struct s_gnl
 {

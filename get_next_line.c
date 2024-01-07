@@ -6,13 +6,13 @@
 /*   By: sruff <sruff@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 17:49:40 by sruff             #+#    #+#             */
-/*   Updated: 2024/01/06 16:12:54 by sruff            ###   ########.fr       */
+/*   Updated: 2024/01/07 14:34:40 by sruff            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static void	multi_free(char **ptr1, char **ptr2, char	**ptr3)
+static void	multi_free(char **ptr1, char **ptr2, char **ptr3)
 {
 	if (ptr1)
 	{
@@ -118,45 +118,17 @@ char	*get_next_line(int fd)
 //int main(void)
 //{
 //    char *ptr = NULL;
+//	int	i = 1;
 //    int file = open("example.txt", O_RDONLY);
 
-//	// BUFFER_SIZE 5 doesnt work check prepare
-//    ptr = get_next_line(file);
-//	printf("%s", ptr);
-//	free(ptr);
-//	ptr = get_next_line(file);
-//	printf("%s", ptr);
-//	free(ptr);
-//	ptr = get_next_line(file);
-//	printf("%s", ptr);
-//	free(ptr);
-//	ptr = get_next_line(file);
-//	printf("%s", ptr);
-//	free(ptr);
-//	ptr = get_next_line(file);
-//	printf("%s", ptr);
-//	free(ptr);
-//	ptr = get_next_line(file);
-//	printf("%s", ptr);
-//	free(ptr);
-//	ptr = get_next_line(file);
-//	printf("%s", ptr);
-//	free(ptr);
-//	ptr = get_next_line(file);
-//	printf("%s", ptr);
-//	free(ptr);
-//	ptr = get_next_line(file);
-//	printf("%s", ptr);
-//	free(ptr);
-//    //while (1 == 1)
-//    //{
-//	//	ptr = get_next_line(file);
-//	//	if (ptr == NULL)
-//	//		break;
-//    //    printf("%s", ptr);
-//    //    //free(ptr);
-//    //}
-
+//	while (i <= 5)
+//	{
+//		i++;
+//		ptr = get_next_line(file);
+//		printf("%s", ptr);
+//		free(ptr);
+//	}
+//	system("leaks a.out");
 //    close(file);
 //    return 0;
 //}

@@ -6,7 +6,7 @@
 /*   By: sruff <sruff@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 14:54:45 by sruff             #+#    #+#             */
-/*   Updated: 2024/01/06 19:26:54 by sruff            ###   ########.fr       */
+/*   Updated: 2024/01/07 14:31:15 by sruff            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 			return (NULL);
 		return (ft_strlcpy(ptr, s2, ft_strlen(s2) + 1), ptr);
 	}
-	if (!s2)
-		return ((char *)s1);
 	ptr = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
 	if (ptr == NULL)
 		return (NULL);
