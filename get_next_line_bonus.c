@@ -6,7 +6,7 @@
 /*   By: sruff <sruff@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/03 17:49:40 by sruff             #+#    #+#             */
-/*   Updated: 2024/01/07 13:25:39 by sruff            ###   ########.fr       */
+/*   Updated: 2024/01/07 15:28:33 by sruff            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,16 @@ static void	prep_nl(char *buffer, t_gnl *gnl)
 {
 	char	*nl_ptr;
 	char	*substr;
+	char	*counter;
 
 	nl_ptr = ft_strchr(buffer, '\n');
 	if (nl_ptr)
 	{
 		nl_ptr++;
-		substr = ft_substr(buffer, 0, nl_ptr - buffer);
+		counter = nl_ptr;
+		while (buffer < counter--)
+			gnl->i++;
+		substr = ft_substr(buffer, 0, gnl->i);
 		gnl->temp = ft_strjoin(gnl->next_line, substr);
 		multi_free(&gnl->next_line, &substr, NULL);
 		gnl->next_line = gnl->temp;
@@ -108,6 +112,7 @@ char	*get_next_line(int fd)
 	gnl.next_line = NULL;
 	gnl.bytes = BUFFER_SIZE;
 	gnl.temp = NULL;
+	gnl.i = 0;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!read_nl(buffer, &gnl))

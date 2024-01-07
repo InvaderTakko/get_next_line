@@ -6,7 +6,7 @@
 /*   By: sruff <sruff@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 16:05:30 by sruff             #+#    #+#             */
-/*   Updated: 2024/01/07 13:25:53 by sruff            ###   ########.fr       */
+/*   Updated: 2024/01/07 15:25:05 by sruff            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 typedef struct s_gnl
 {
 	int				fd;
+	int				i;
 	long			bytes;
 	char			*temp;
 	char			*next_line;
